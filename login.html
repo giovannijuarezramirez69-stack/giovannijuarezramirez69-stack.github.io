@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ByteCraft - Login Neón</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="neon-background-effect"></div>
+
+        <div class="login-card">
+            <h2>Iniciar Sesión</h2>
+
+            <form id="loginForm">
+                <div class="input-glow-group">
+                    <input type="text" id="username" required />
+                    <label for="username">Usuario</label>
+                </div>
+
+                <div class="input-glow-group">
+                    <input type="password" id="password" required />
+                    <label for="password">Contraseña</label>
+                </div>
+
+                <button type="submit" class="neon-button">Entrar</button>
+            </form>
+
+            <p id="login-error" class="text-red-400 text-sm mt-4 hidden">
+                Usuario o contraseña incorrectos.
+            </p>
+        </div>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>

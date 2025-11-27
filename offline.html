@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Sin Conexión! - ByteCraft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        /* Ajuste simple para centrar en la pantalla */
+        .offline-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+    <div class="offline-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="p-8 bg-white shadow-xl rounded-lg max-w-md w-full">
+            <i class="fas fa-plug text-6xl text-red-500 mb-4"></i>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">¡Ups! Estás Offline</h1>
+            <p class="text-gray-600 mb-6">
+                Parece que no tienes conexión a internet. 
+                <span class="font-semibold">No te preocupes</span>, la aplicación ByteCraft está funcionando en modo sin conexión.
+            </p>
+            <p class="text-sm text-gray-500 mb-6">
+                Puedes ver las páginas principales (`dashboard.html` y `login.html`), pero esta ruta específica no pudo cargarse.
+            </p>
+            <a href="dashboard.html" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                Ir al Dashboard (Offline)
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

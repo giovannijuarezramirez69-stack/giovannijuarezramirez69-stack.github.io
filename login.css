@@ -1,0 +1,216 @@
+/* Variables y Estilos Base */
+:root {
+    --dark-bg: #100f1c;
+    --neon-blue: #ffffff; 
+    --neon-cyan: #cc00ff;
+    --text-light: #e0e0e0;
+    --card-bg: rgba(255, 255, 255, 0.08);
+}
+
+/* Fondo y estructura general */
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* ✅ Mínima altura con soporte para móviles (dvh) */
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0;
+    background: linear-gradient(135deg, #0f0a21, #000000);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Contenedor principal */
+#login-screen {
+    width: 100%; /* ✅ Asegura que ocupe el ancho disponible */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px; /* ✅ Margen de seguridad para que no toque los bordes en celular */
+    box-sizing: border-box;
+}
+
+/* Efecto de onda neon */
+.neon-background-effect {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 150px;
+    background-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(153, 0, 255, 0.1) 20%,
+        rgba(208, 0, 255, 0.316) 50%,
+        rgba(149, 0, 255, 0.488) 80%,
+        transparent 100%
+    );
+    filter: blur(3px);
+    animation: wave-line-move 10s linear infinite,
+               wave-form 5s infinite alternate ease-in-out;
+    pointer-events: none; /* ✅ Evita que interfiera con clicks */
+}
+
+/* Keyframes */
+@keyframes wave-line-move {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+@keyframes wave-form {
+    0% {
+        clip-path: polygon(0 80%, 33% 40%, 66% 60%, 100% 20%, 100% 100%, 0 100%);
+    }
+    100% {
+        clip-path: polygon(0 20%, 33% 60%, 66% 40%, 100% 80%, 100% 100%, 0 100%);
+    }
+}
+
+/* Tarjeta de login */
+.login-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 40px;
+    width: 350px;
+    /* ✅ Responsivo: nunca será más ancha que la pantalla */
+    max-width: 100%; 
+    text-align: center;
+    position: relative;
+    color: var(--text-light);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.login-card::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 17px;
+    background: linear-gradient(45deg, var(--neon-blue), var(--neon-cyan), var(--neon-blue));
+    filter: blur(4px);
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.login-card:hover::before {
+    opacity: 0.8;
+}
+
+.login-card h2 {
+    margin-bottom: 30px;
+    color: var(--neon-blue);
+}
+
+/* Inputs */
+.input-glow-group {
+    position: relative;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.input-glow-group input {
+    width: 100%;
+    padding: 15px 10px 5px 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-light);
+    font-size: 16px; /* ✅ 16px evita zoom automático en iPhone */
+    transition: all 0.4s ease;
+    outline: none;
+    box-sizing: border-box; /* ✅ Evita que el padding rompa el ancho */
+}
+
+.input-glow-group input:focus,
+.input-glow-group input:valid {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 5px var(--neon-blue),
+                0 0 3px var(--neon-cyan) inset;
+    background: rgba(0, 224, 255, 0.03);
+}
+
+/* Etiquetas flotantes */
+.input-glow-group label {
+    position: absolute;
+    top: 15px;
+    left: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    pointer-events: none;
+    transition: all 0.4s ease;
+}
+
+.input-glow-group input:focus ~ label,
+.input-glow-group input:valid ~ label {
+    top: -5px;
+    left: 5px;
+    font-size: 11px;
+    padding: 0 5px;
+    color: var(--neon-cyan);
+    background-color: var(--dark-bg);
+    border-radius: 3px;
+    z-index: 2;
+}
+
+/* Botón */
+.neon-button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(45deg, var(--neon-blue), var(--neon-cyan));
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--dark-bg);
+    margin-top: 20px;
+    transition: all 0.3s;
+}
+
+.neon-button:hover {
+    background: linear-gradient(45deg, var(--neon-cyan), var(--neon-blue));
+    transform: translateY(-2px);
+}
+
+.neon-button:active {
+    transform: translateY(0);
+}
+
+/* =========================================
+   ✅ CORRECCIONES PARA CELULAR (MÓVIL)
+   ========================================= */
+@media (max-width: 480px) {
+    
+    /* 1. Ocultamos las ondas de fondo para que no ensanchen la pantalla */
+    .neon-background-effect {
+        display: none; 
+    }
+
+    /* 2. Ocultamos el brillo trasero (blur) que se ve cortado en la foto */
+    .login-card::before {
+        display: none;
+    }
+
+    /* 3. Ajustamos la tarjeta para que quede limpia y centrada */
+    .login-card {
+        width: 100%;       /* Aprovecha el ancho disponible */
+        background: #100f1c; /* Fondo sólido oscuro, se lee mejor */
+        border: 1px solid rgba(255, 255, 255, 0.15); /* Borde sutil */
+        box-shadow: none;  /* Quitamos sombras pesadas */
+        padding: 30px 20px; /* Ajustamos espacio interno */
+    }
+
+    /* 4. Aseguramos el fondo del body */
+    body {
+        background: #0f0a21; /* Fondo oscuro simple */
+    }
+}

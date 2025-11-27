@@ -1,0 +1,102 @@
+/* =========================================
+   ESTILOS BASE
+   ========================================= */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6;
+    color: #374151;
+    min-height: 100vh;
+}
+
+/* Título con Gradiente */
+.text-gradient {
+    background-image: linear-gradient(to right, #6b21a8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Tarjetas de Dashboard */
+.dashboard-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(107, 33, 168, 0.2);
+}
+
+/* =========================================
+   ✅ ESTILOS DE NAVEGACIÓN (AJUSTADOS PARA EL MENÚ INFERIOR)
+   ========================================= */
+
+/* Estilos base del enlace */
+.nav-link {
+    color: #6b7280; /* text-gray-500 */
+    padding: 4px 8px; 
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 150ms;
+    /* Estilos para apilar verticalmente */
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    flex-direction: column; 
+    text-decoration: none; 
+}
+
+/* Estilo para el ícono y texto cuando se hace hover */
+.nav-link:hover {
+    color: #7c3aed; /* hover:text-indigo-600 */
+    background-color: #f9fafb; /* hover:bg-gray-50 */
+}
+
+/* Estilo para el ícono y texto cuando la ruta está activa */
+.nav-link.active {
+    color: #4f46e5; /* text-indigo-600 */
+}
+
+/* Ajustes para el menú inferior en móviles */
+@media (max-width: 768px) {
+    .nav-link {
+        font-size: 0.75rem; /* Texto más pequeño para móvil */
+        padding: 4px 0;
+    }
+    .nav-link i {
+        font-size: 1.2rem; /* Íconos un poco más grandes */
+    }
+}
+
+
+/* =========================================
+   ESTILOS DE TAREAS (Mantenidos)
+   ========================================= */
+.task-item {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+}
+
+.task-item.completed {
+    background-color: #f0fdf4; /* bg-green-50 */
+    opacity: 0.7;
+    text-decoration: line-through;
+}
+
+.priority-badge {
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+}
+
+.priority-Alta { background-color: #ef4444; } /* red-500 */
+.priority-Media { background-color: #f59e0b; } /* amber-500 */
+.priority-Baja { background-color: #10b981; } /* emerald-500 */

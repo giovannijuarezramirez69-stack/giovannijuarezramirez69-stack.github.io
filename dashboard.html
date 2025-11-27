@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4f46e5"/>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/icon-192x192.png">
+    
+    <title>ByteCraft - Dashboard Local</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+    <div id="network-status-banner" class="fixed top-0 left-0 right-0 z-50 p-2 text-center text-sm font-medium transition-all duration-300 transform -translate-y-full" style="background-color: #f59e0b; color: white;">
+        <i class="fas fa-plug mr-2"></i> Conectando a la red...
+    </div>
+
+    <header class="bg-white shadow-sm p-4 sticky top-0 z-20 flex justify-between items-center md:hidden">
+        <span data-page="dashboard" class="text-2xl font-bold text-gradient cursor-pointer">ByteCraft</span>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-20"> 
+
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+            
+            <div class="flex items-center mb-4 md:mb-0">
+                <button id="back-button" onclick="handleGoBack()" class="p-2 mr-3 text-gray-500 hover:text-indigo-600 transition bg-white rounded-full shadow md:hidden" style="display:none;">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 id="page-title" class="text-3xl font-extrabold text-gray-900">
+                    <span class="text-gradient">Dashboard</span>
+                </h1>
+            </div>
+
+            <div class="flex space-x-3">
+                
+                <button id="install-button" class="px-4 py-2 bg-indigo-600 text-white rounded-full text-sm font-medium hover:bg-indigo-700 transition hidden">
+                    <i class="fas fa-download mr-2"></i> Instalar App
+                </button>
+                
+                <div class="relative">
+                    <button id="notification-button" class="p-2 text-gray-500 hover:text-indigo-600 transition bg-white rounded-full shadow">
+                        <i class="fas fa-bell"></i>
+                        <span id="notification-badge" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full hidden">3</span>
+                    </button>
+                    <div id="notification-dropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-10 hidden overflow-hidden">
+                        <div id="notification-list" class="divide-y divide-gray-100">
+                            </div>
+                    </div>
+                </div>
+                
+                <button onclick="downloadDBData()" class="p-2 text-gray-500 hover:text-teal-600 transition bg-white rounded-full shadow" title="Descargar Copia de Seguridad de Datos">
+                    <i class="fas fa-file-export"></i>
+                </button>
+                
+                <button onclick="navigate('configuracion')" class="p-2 text-gray-500 hover:text-indigo-600 transition bg-white rounded-full shadow" title="Gestión de Datos">
+                    <i class="fas fa-database"></i>
+                </button>
+
+                <button onclick="logout()" class="p-2 text-gray-500 hover:text-indigo-600 transition bg-white rounded-full shadow">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <main id="app-content"></main>
+        
+        <br class="md:hidden">
+
+        <div id="desktop-nav-cards" class="hidden md:block">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Navegación Rápida</h2>
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-6">
+
+                <div data-page="dashboard" class="dashboard-card bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition flex flex-col items-center text-center cursor-pointer">
+                    <i class="fas fa-tachometer-alt text-4xl text-indigo-500 mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-800">Inicio</h3>
+                    <p class="text-sm text-gray-500 mt-1">Vista general del sistema</p>
+                </div>
+
+                <div data-page="clientes" class="dashboard-card bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition flex flex-col items-center text-center cursor-pointer">
+                    <i class="fas fa-users text-4xl text-teal-500 mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-800">Clientes</h3>
+                    <p class="text-sm text-gray-500 mt-1">Gestión de contactos</p>
+                </div>
+
+                <div data-page="proyectos" class="dashboard-card bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition flex flex-col items-center text-center cursor-pointer">
+                    <i class="fas fa-project-diagram text-4xl text-purple-500 mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-800">Proyectos</h3>
+                    <p class="text-sm text-gray-500 mt-1">Panel de Proyectos</p>
+                </div>
+
+                <div data-page="tareas" class="dashboard-card bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition flex flex-col items-center text-center cursor-pointer">
+                    <i class="fas fa-tasks text-4xl text-yellow-500 mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-800">Tareas</h3>
+                    <p class="text-sm text-gray-500 mt-1">Listado de actividades</p>
+                </div>
+                
+                <div data-page="colaboradores" class="dashboard-card bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition flex flex-col items-center text-center cursor-pointer">
+                    <i class="fas fa-handshake text-4xl text-blue-500 mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-800">Equipo</h3>
+                    <p class="text-sm text-gray-500 mt-1">Gestión de equipo</p>
+                </div>
+                
+                <div data-page="configuracion" class="dashboard-card bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition flex flex-col items-center text-center cursor-pointer">
+                    <i class="fas fa-cogs text-4xl text-gray-500 mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-800">Configuración</h3>
+                    <p class="text-sm text-gray-500 mt-1">Gestión de datos y papelera</p>
+                </div>
+
+
+            </div>
+            <hr class="my-8 border-gray-200">
+        </div>
+
+        <template id="template-dashboard">
+            <div class="space-y-6">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-tachometer-alt text-indigo-500 mr-2"></i> Vista General
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="dashboard-stats">
+                    </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-lg lg:col-span-2">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i> Tareas de Alta Prioridad
+                        </h3>
+                        <ul id="priority-tasks" class="space-y-3">
+                            </ul>
+                        <p id="no-priority-tasks" class="text-center text-gray-500 mt-4 hidden">No hay tareas de alta prioridad pendientes.</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-users text-teal-500 mr-2"></i> Clientes Recientes
+                        </h3>
+                        <ul id="recent-clients" class="space-y-3">
+                            </ul>
+                        <p id="no-recent-clients" class="text-center text-gray-500 mt-4 hidden">Aún no hay clientes.</p>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template id="template-clientes">
+            <div class="space-y-6">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center mb-6">
+                    <i class="fas fa-users text-teal-500 mr-2"></i> Clientes
+                </h2>
+                <div class="flex justify-end">
+                    <button onclick="openAddClientModal()" class="px-4 py-2 bg-teal-600 text-white rounded-full font-medium hover:bg-teal-700 transition flex items-center">
+                        <i class="fas fa-user-plus mr-2"></i> Nuevo Cliente
+                    </button>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4">Clientes Existentes</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Contacto</th>
+                                    <th scope="col" class="relative px-6 py-3"><span class="sr-only">Acciones</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="clients-list" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                    <p id="no-clients" class="text-center text-gray-500 mt-4 hidden">Aún no hay clientes registrados.</p>
+                </div>
+            </div>
+        </template>
+
+        <template id="template-proyectos">
+            <div class="space-y-6">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center mb-6">
+                    <i class="fas fa-project-diagram text-purple-500 mr-2"></i> Proyectos
+                </h2>
+                <div class="flex justify-end">
+                    <button onclick="openAddProjectModal()" class="px-4 py-2 bg-purple-600 text-white rounded-full font-medium hover:bg-purple-700 transition flex items-center">
+                        <i class="fas fa-plus mr-2"></i> Nuevo Proyecto
+                    </button>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4">Proyectos Activos</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Cliente</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entrega</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                    <th scope="col" class="relative px-6 py-3"><span class="sr-only">Acciones</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="projects-list" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                    <p id="no-projects" class="text-center text-gray-500 mt-4 hidden">Aún no hay proyectos registrados.</p>
+                </div>
+            </div>
+        </template>
+
+        <template id="template-tareas">
+            <div class="space-y-6">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center mb-6">
+                    <i class="fas fa-tasks text-yellow-500 mr-2"></i> Tareas
+                </h2>
+                
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex space-x-4 items-center">
+                        <label for="task-filter-status" class="text-sm font-medium text-gray-700">Filtrar por Estado:</label>
+                        <select id="task-filter-status" class="border border-gray-300 p-2 rounded text-sm focus:ring-2 focus:ring-yellow-500 outline-none">
+                            <option value="All">Todas</option>
+                            <option value="Pendiente" selected>Pendiente</option>
+                            <option value="En Curso">En Curso</option>
+                            <option value="Completada">Completada</option>
+                        </select>
+                    </div>
+                    <button onclick="openAddTaskModal()" class="px-4 py-2 bg-yellow-600 text-white rounded-full font-medium hover:bg-yellow-700 transition flex items-center">
+                        <i class="fas fa-plus mr-2"></i> Nueva Tarea
+                    </button>
+                </div>
+                
+                <div id="tasks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    </div>
+                <p id="no-tasks" class="text-center text-gray-500 mt-4 hidden">No hay tareas pendientes.</p>
+            </div>
+        </template>
+
+        <template id="template-colaboradores">
+            <div class="space-y-6">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center mb-6">
+                    <i class="fas fa-handshake text-blue-500 mr-2"></i> Equipo de Colaboradores
+                </h2>
+                <div class="flex justify-end">
+                    <button onclick="openAddCollaboratorModal()" class="px-4 py-2 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition flex items-center">
+                        <i class="fas fa-user-plus mr-2"></i> Nuevo Colaborador
+                    </button>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4">Colaboradores Existentes</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+                                    <th scope="col" class="relative px-6 py-3"><span class="sr-only">Acciones</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="collaborators-list" class="bg-white divide-y divide-gray-200">
+                                </tbody>
+                        </table>
+                    </div>
+                    <p id="no-collaborators" class="text-center text-gray-500 mt-4 hidden">Aún no hay colaboradores registrados.</p>
+                </div>
+            </div>
+        </template>
+
+        <template id="template-configuracion">
+            <div class="space-y-6">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center mb-6">
+                    <i class="fas fa-cogs text-gray-500 mr-2"></i> Configuración y Mantenimiento
+                </h2>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                        <i class="fas fa-database text-indigo-500 mr-2"></i> Gestión de la Base de Datos Local
+                    </h3>
+                    <p class="text-gray-600 mb-4">Maneja las copias de seguridad de tus datos (Clientes, Proyectos, Tareas, Colaboradores y Papelera) y restaura el estado de la aplicación.</p>
+                    <div class="flex space-x-4">
+                        <button onclick="downloadDBData()" class="px-4 py-2 bg-indigo-600 text-white rounded font-medium hover:bg-indigo-700 transition flex items-center">
+                            <i class="fas fa-download mr-2"></i> Exportar Datos (JSON)
+                        </button>
+                        <input type="file" id="import-db-file" accept=".json" style="display:none;" onchange="handleImportDB(event)">
+                        <button onclick="document.getElementById('import-db-file').click()" class="px-4 py-2 bg-gray-300 text-gray-800 rounded font-medium hover:bg-gray-400 transition flex items-center">
+                            <i class="fas fa-upload mr-2"></i> Importar Datos
+                        </button>
+                    </div>
+                    <p id="import-status" class="mt-3 text-sm text-green-600"></p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                        <i class="fas fa-trash-restore-alt text-red-500 mr-2"></i> Papelera de Reciclaje
+                    </h3>
+                    <p class="text-gray-600 mb-4">Aquí se encuentran los elementos que has eliminado recientemente. Puedes restaurarlos o eliminarlos permanentemente.</p>
+                    <div id="deleted-items-list" class="space-y-3">
+                        </div>
+                    <p id="no-deleted-items" class="text-center text-gray-500 mt-4 hidden">La papelera está vacía.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-500">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i> Restaurar Estado Inicial
+                    </h3>
+                    <p class="text-gray-600 mb-4">Esto eliminará todos tus datos actuales (Clientes, Proyectos, Tareas, Colaboradores y Papelera) y restaurará la base de datos a su estado de fábrica inicial. **Esta acción es irreversible.**</p>
+                    <button onclick="restoreInitialDB()" class="px-4 py-2 bg-red-600 text-white rounded font-medium hover:bg-red-700 transition flex items-center">
+                        <i class="fas fa-undo-alt mr-2"></i> Restaurar Ahora
+                    </button>
+                </div>
+            </div>
+        </template>
+        
+    </div>
+    
+    <div id="modal-client" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <h3 class="text-xl font-bold mb-4">Añadir Nuevo Cliente</h3>
+            <form id="addClientForm">
+                <div class="mb-4">
+                    <label for="client-name" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Cliente</label>
+                    <input type="text" id="client-name" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-teal-500 outline-none">
+                </div>
+                <div class="mb-4">
+                    <label for="client-contact" class="block text-sm font-medium text-gray-700 mb-1">Contacto (Email)</label>
+                    <input type="email" id="client-contact" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-teal-500 outline-none">
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeModals()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700">Guardar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="modal-edit-client" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <h3 class="text-xl font-bold mb-4">Editar Cliente</h3>
+            <form id="editClientForm">
+                <input type="hidden" id="edit-client-id">
+                <div class="mb-4">
+                    <label for="edit-client-name" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Cliente</label>
+                    <input type="text" id="edit-client-name" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none">
+                </div>
+                <div class="mb-4">
+                    <label for="edit-client-contact" class="block text-sm font-medium text-gray-700 mb-1">Contacto</label>
+                    <input type="email" id="edit-client-contact" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none">
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeModals()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="modal-project" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <h3 class="text-xl font-bold mb-4">Añadir Nuevo Proyecto</h3>
+            <form id="addProjectForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="project-name" class="block text-sm font-medium text-gray-700 mb-1">Título del Proyecto</label>
+                        <input type="text" id="project-name" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none">
+                    </div>
+                    <div class="mb-4">
+                        <label for="project-client" class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
+                        <select id="project-client" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none">
+                            <option value="">Cargando clientes...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="project-duedate" class="block text-sm font-medium text-gray-700 mb-1">Fecha Límite</label>
+                        <input type="date" id="project-duedate" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none">
+                    </div>
+                    <div class="mb-4">
+                        <label for="project-status" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                        <select id="project-status" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none">
+                            <option value="Pendiente" selected>Pendiente</option>
+                            <option value="En Curso">En Curso</option>
+                            <option value="Completado">Completado</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeModals()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Guardar Proyecto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="modal-edit-project" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+            <h3 class="text-xl font-bold mb-4">Editar Proyecto</h3>
+            <form id="editProjectForm">
+                <input type="hidden" id="edit-project-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="edit-project-name" class="block text-sm font-medium text-gray-700 mb-1">Título del Proyecto</label>
+                        <input type="text" id="edit-project-name" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none">
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-project-client" class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
+                        <select id="edit-project-client" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none">
+                            <option value="">Cargando clientes...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="edit-project-duedate" class="block text-sm font-medium text-gray-700 mb-1">Fecha Límite</label>
+                        <input type="date" id="edit-project-duedate" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none">
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-project-status" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                        <select id="edit-project-status" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-purple-500 outline-none">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="En Curso">En Curso</option>
+                            <option value="Completado">Completado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeModals()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-add-task" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fas fa-plus mr-2 text-yellow-500"></i> Nueva Tarea</h3>
+            <form id="addTaskForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4 md:col-span-2">
+                        <label for="task-title-add" class="block text-sm font-medium text-gray-700 mb-1">Título de la Tarea</label>
+                        <input type="text" id="task-title-add" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                    </div>
+                    <div class="mb-4 md:col-span-2">
+                        <label for="task-description-add" class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                        <textarea id="task-description-add" rows="3" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none"></textarea>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="mb-4">
+                        <label for="task-duedate-add" class="block text-sm font-medium text-gray-700 mb-1">Fecha Límite</label>
+                        <input type="date" id="task-duedate-add" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                    </div>
+                    <div class="mb-4">
+                        <label for="task-priority-add" class="block text-sm font-medium text-gray-700 mb-1">Prioridad</label>
+                        <select id="task-priority-add" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                            <option value="Baja">Baja</option>
+                            <option value="Media" selected>Media</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Urgente">Urgente</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="task-assignee-add" class="block text-sm font-medium text-gray-700 mb-1">Asignado a</label>
+                        <select id="task-assignee-add" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                            <option value="">Sin Asignar</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="task-client-add" class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
+                        <select id="task-client-add" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                            <option value="">Sin Cliente</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="task-status-add" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                    <select id="task-status-add" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                        <option value="Pendiente" selected>Pendiente</option>
+                        <option value="En Curso">En Curso</option>
+                        <option value="Completada">Completada</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeModals()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Crear Tarea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="modal-edit-task" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fas fa-edit mr-2 text-yellow-500"></i> Editar Tarea</h3>
+            <form id="editTaskForm">
+                <input type="hidden" id="edit-task-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4 md:col-span-2">
+                        <label for="edit-task-title" class="block text-sm font-medium text-gray-700 mb-1">Título de la Tarea</label>
+                        <input type="text" id="edit-task-title" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                    </div>
+                    <div class="mb-4 md:col-span-2">
+                        <label for="edit-task-description" class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                        <textarea id="edit-task-description" rows="3" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none"></textarea>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="mb-4">
+                        <label for="edit-task-duedate" class="block text-sm font-medium text-gray-700 mb-1">Fecha Límite</label>
+                        <input type="date" id="edit-task-duedate" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-task-priority" class="block text-sm font-medium text-gray-700 mb-1">Prioridad</label>
+                        <select id="edit-task-priority" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                            <option value="Baja">Baja</option>
+                            <option value="Media">Media</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Urgente">Urgente</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-task-assignee" class="block text-sm font-medium text-gray-700 mb-1">Asignado a</label>
+                        <select id="edit-task-assignee" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                            <option value="">Sin Asignar</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="edit-task-client" class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
+                        <select id="edit-task-client" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                            <option value="">Sin Cliente</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="edit-task-status" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                    <select id="edit-task-status" class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-yellow-500 outline-none">
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En Curso">En Curso</option>
+                        <option value="Completada">Completada</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeModals()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-collaborator" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <h3 class="text-xl font-bold mb-4">Añadir Nuevo Colaborador</h3>
+            <form id="addCollaboratorForm">
+                <div class="mb-4">
+                    <label for="collab-name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                    <input type="text" id="collab-name" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div class="mb-4">
+                    <label for="collab-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="collab-email" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div class="mb-4">
+                    <label for="collab-role" class="block text-sm font-medium text-gray-700 mb-1">Rol</label>
+                    <select id="collab-role" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                        </select>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeModals()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Guardar Colaborador</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-edit-collaborator" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <h3 class="text-xl font-bold mb-4">Editar Colaborador</h3>
+            <form id="editCollaboratorForm">
+                <input type="hidden" id="edit-collab-id">
+                <div class="mb-4">
+                    <label for="edit-collab-name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                    <input type="text" id="edit-collab-name" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div class="mb-4">
+                    <label for="edit-collab-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="edit-collab-email" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div class="mb-4">
+                    <label for="edit-collab-role" class="block text-sm font-medium text-gray-700 mb-1">Rol</label>
+                    <select id="edit-collab-role" required class="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                        </select>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeModals()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="mobile-nav" class="fixed bottom-0 left-0 right-0 bg-white shadow-xl z-30 md:hidden">
+        <div class="flex justify-around p-2">
+            <a href="#dashboard" data-page="dashboard" class="nav-link flex flex-col items-center justify-center w-1/6 text-xs text-center active">
+                <i class="fas fa-tachometer-alt text-lg"></i>
+                <span class="mt-1">Inicio</span>
+            </a>
+            <a href="#clientes" data-page="clientes" class="nav-link flex flex-col items-center justify-center w-1/6 text-xs text-center">
+                <i class="fas fa-users text-lg"></i>
+                <span class="mt-1">Clientes</span>
+            </a>
+            <a href="#proyectos" data-page="proyectos" class="nav-link flex flex-col items-center justify-center w-1/6 text-xs text-center">
+                <i class="fas fa-project-diagram text-lg"></i>
+                <span class="mt-1">Proyectos</span>
+            </a>
+            <a href="#tareas" data-page="tareas" class="nav-link flex flex-col items-center justify-center w-1/6 text-xs text-center">
+                <i class="fas fa-tasks text-lg"></i>
+                <span class="mt-1">Tareas</span>
+            </a>
+            <a href="#colaboradores" data-page="colaboradores" class="nav-link flex flex-col items-center justify-center w-1/6 text-xs text-center">
+                <i class="fas fa-handshake text-lg"></i>
+                <span class="mt-1">Equipo</span>
+            </a>
+            <a href="#configuracion" data-page="configuracion" class="nav-link flex flex-col items-center justify-center w-1/6 text-xs text-center">
+                <i class="fas fa-cogs text-lg"></i>
+                <span class="mt-1">Ajustes</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
